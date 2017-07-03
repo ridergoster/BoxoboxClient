@@ -1,0 +1,16 @@
+{
+  "name": "boxobox-client",
+  "version": "1.0.0",
+  "description": "client app for boxobox",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "vincent kocupyr & vincent durpoix",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "google-tts-api": "0.0.1",
+    "socket.io": "^2.0.3"
+  }
+}
