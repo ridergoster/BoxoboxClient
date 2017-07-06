@@ -1,0 +1,22 @@
+{
+  "name": "boxobox-client",
+  "version": "1.0.0",
+  "description": "client for boxobox using nodeJS and Johny-Five",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ridergoster/BoxoboxClient.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ridergoster/BoxoboxClient/issues"
+  },
+  "homepage": "https://github.com/ridergoster/BoxoboxClient#readme",
+  "dependencies": {
+    "nfc-pcsc": "^0.5.0"
+  }
+}
