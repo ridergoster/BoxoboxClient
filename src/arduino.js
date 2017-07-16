@@ -1,7 +1,7 @@
 var say = require('say');
 var five = require('johnny-five');
 EventEmitter = require("events").EventEmitter;
-const NFC = require('nfc-pcsc').default;
+const { NFC } = require('nfc-pcsc');
 
 var Board = class Board extends EventEmitter {
   constructor() {
