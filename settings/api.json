@@ -3,6 +3,9 @@
   "route": {
     "question": {
       "random": "/questions/random"
+    },
+    "answer": {
+      "post": "/answers"
     }
   }
 }

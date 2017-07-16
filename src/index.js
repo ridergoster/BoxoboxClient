@@ -6,7 +6,7 @@ var arduino = new Board();
 
 var valueSensor = 0;
 var timeInterval = null;
-var question, choise = null;
+var question, choice = null;
 
 var showTime = function() {
   var date = new Date();
@@ -73,7 +73,7 @@ arduino.on('choice-left', function() {
   if (arduino.status === 'question' && question !== null) {
     arduino.piezo.frequency(587, 100);
     arduino.scroll.line(1, 'choice \"' + question.answer_left + '\" ?');
-    choise = 'LEFT';
+    choice = 'LEFT';
   }
 });
 
@@ -82,6 +82,34 @@ arduino.on('choice-right', function() {
   if (arduino.status === 'question' && question !== null) {
     arduino.piezo.frequency(587, 100);
     arduino.scroll.line(1, 'choice \"' + question.answer_right + '\" ?');
-    choise = 'RIGHT';
+    choice = 'RIGHT';
   }
 });
+
+arduino.on('card-reader', function(token) {
+  if(choice != null && question != null && arduino.status === 'question') {
+    console.log('arduino controller read data', token);
+    var options = {
+        method: 'POST',
+        uri: settings.api.url + settings.api.route.answer.post,
+        body: {
+          question: question._id,
+          answer: choice
+        },
+        headers: {
+            'User-Agent': 'Request-Promise',
+            'Authorization': token
+        },
+        json: true
+    };
+    rp(options)
+    .then(function (value) {
+      arduino.scroll.clear();
+      arduino.scroll.line(0, value.user.username + ' answer save !');
+    })
+    .catch(function (err) {
+      arduino.scroll.clear();
+      arduino.scroll.line(0, 'an error occur...');
+    });
+  }
+})
