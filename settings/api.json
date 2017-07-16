@@ -1,0 +1,8 @@
+{
+  "url": "http://boxobox-api.herokuapp.com/api",
+  "route": {
+    "question": {
+      "random": "/questions/random"
+    }
+  }
+}

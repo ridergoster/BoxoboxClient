@@ -10,7 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.3",
-    "google-tts-api": "0.0.1",
+    "johnny-five": "github:rwaldron/johnny-five#master",
+    "lcd-scrolling": "git+https://github.com/ridergoster/LCD_Scrolling.git",
+    "lodash": "^4.17.4",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "say": "^0.11.0",
     "socket.io": "^2.0.3"
   }
 }
