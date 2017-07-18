@@ -30,22 +30,26 @@ var Board = class Board extends EventEmitter {
         pin: "A2",
         threshold: 50,
       });
+
       this.luminositySensor = new five.Sensor({
         pin: "A3",
-        threshold: 100,
+        threshold: 50,
       });
+
       this.temperatureSensor = new five.Multi({
         controller: "DHT11_I2C_NANO_BACKPACK"
       });
 
       this.questionBtn.on("down", function() {
-        this.emit('trigger');
-        this.status = 'question';
-        this.emit('question');
+        if (this.status !== 'alarm') {
+          this.emit('trigger');
+          this.status = 'question';
+          this.emit('question');
+        }
       }.bind(this));
 
       this.timeBtn.on("down", function() {
-        if (this.status !== 'info') {
+        if (this.status !== 'info' && this.status !== 'alarm') {
           this.emit('trigger');
           this.status = 'info';
         }
@@ -73,17 +77,14 @@ var Board = class Board extends EventEmitter {
         this.emit("choice-right");
       }.bind(this));
 
-      // temperatureSensor.on("change", function() {
-      //   console.log("Thermometer");
-      //   console.log("  celsius           : ", this.thermometer.celsius);
-      //   console.log("  fahrenheit        : ", this.thermometer.fahrenheit);
-      //   console.log("  kelvin            : ", this.thermometer.kelvin);
-      //   console.log("--------------------------------------");
-      //
-      //   console.log("Hygrometer");
-      //   console.log("  relative humidity : ", this.hygrometer.relativeHumidity);
-      //   console.log("--------------------------------------");
-      // });
+      this.microphoneSensor.on("change", function() {
+        this.emit('alarm-noise');
+      }.bind(this))
+
+      this.luminositySensor.on("change", function() {
+        this.emit('alarm-luminosity');
+      }.bind(this))
+
       this.status = 'info';
       this.board.wait(1000, function() {this.emit('info'); }.bind(this));
     }.bind(this));
@@ -132,16 +133,6 @@ var Board = class Board extends EventEmitter {
       console.error('whoops! there was an error');
     });
   }
-
-
-//  this.emit('error', new Error('whoops!'));
-
-  //
-  // lcd.clear();
-  // lcd.cursor(0,0).print("Hello World");
-  //
-  // // Plays a song
-  // piezo.frequency(587, 2000); // Play note d5 for 1 second
 }
 
 module.exports = Board
