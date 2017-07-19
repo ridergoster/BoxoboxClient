@@ -1,5 +1,7 @@
 var Board = require('./arduino');
 var settings = require('../settings');
+var socket = require('socket.io-client')(settings.api.url);
+var _ = require('lodash');
 var request = require('request');
 var rp = require('request-promise');
 var arduino = new Board();
@@ -167,4 +169,45 @@ arduino.on('alarm-luminosity', function() {
     arduino.scroll.lines(1, "PLEASE STOP ME...")
     this.ledR.on();
   }
+});
+
+socket.on('connect', function(){
+  console.log('connected to socket !');
+  socket.emit('arduino');
+});
+
+socket.on('activate-alarm-luminosity', function () {
+  if (!alarmActif.includes('LUMINOSITY')) {
+    alarmActif.push('LUMINOSITY');
+    arduino.piezo.frequency(587, 100);
+    arduino.scroll.lines(1, 'LUMINOSITY ALARM ON');
+  }
+  socket.emit('alarm-luminosity-activate');
+});
+
+socket.on('activate-alarm-noise', function () {
+  if (!alarmActif.includes('NOISE')) {
+    alarmActif.push('NOISE');
+    arduino.piezo.frequency(587, 100);
+    arduino.scroll.lines(1, 'NOISE ALARM ON');
+  }
+  socket.emit('alarm-noise-activate');
+});
+
+socket.on('desactivate-alarm-luminosity', function () {
+  if (alarmActif.includes('LUMINOSITY')) {
+    _.pull('LUMINOSITY');
+    arduino.piezo.frequency(587, 100);
+    arduino.scroll.lines(1, 'LUMINOSITY ALARM OFF');
+  }
+  socket.emit('alarm-luminosity-desactivate');
+});
+
+socket.on('desactivate-alarm-noise', function () {
+  if (alarmActif.includes('NOISE')) {
+    _.pull('NOISE');
+    arduino.piezo.frequency(587, 100);
+    arduino.scroll.lines(1, 'NOISE ALARM OFF');
+  }
+  socket.emit('alarm-noise-desactivate');
 });
