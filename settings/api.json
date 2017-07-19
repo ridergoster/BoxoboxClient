@@ -6,6 +6,24 @@
     },
     "answer": {
       "post": "/api/answers"
+    },
+    "user": {
+      "me": "/api/users/me"
+    },
+    "alarm": {
+      "post": "/api/alarms"
+    },
+    "noise": {
+      "post": "/api/noises"
+    },
+    "temperature": {
+      "post": "/api/temperatures"
+    },
+    "luminosity": {
+      "post":"/api/luminosities"
+    },
+    "humidity": {
+      "post":"/api/humidities"
     }
   }
 }

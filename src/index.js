@@ -46,8 +46,7 @@ var showSensor = function() {
   arduino.scroll.line(1, value);
 }
 
-var responseToQuestion = function() {
-  console.log('arduino controller read data', token);
+function responseToQuestion(token) {
   var options = {
       method: 'POST',
       uri: settings.api.url + settings.api.route.answer.post,
@@ -72,8 +71,29 @@ var responseToQuestion = function() {
   });
 };
 
-var stopAlarm = function() {
-  return true;
+function stopAlarm(token) {
+  clearInterval(alarmInterval);
+  alarmTrigger = false;
+  arduino.status = "nothing";
+  var postAlarm = {
+      method: 'POST',
+      uri: settings.api.url + settings.api.route.alarm.post,
+      headers: {
+          'User-Agent': 'Request-Promise',
+          'Authorization': token
+      },
+      json: true
+  };
+  rp(postAlarm)
+  .then(function (value) {
+    arduino.scroll.clear();
+    arduino.scroll.line(0, value.user.username + ' stop the alarm !');
+    socket.emit('alarm-stop', {'username': value.user.username, 'sensor': value.sensor });
+  })
+  .catch(function (err) {
+    arduino.scroll.clear();
+    arduino.scroll.line(0, 'an error occur...');
+  });
 };
 
 arduino.on('question', function() {
@@ -134,7 +154,7 @@ arduino.on('choice-right', function() {
 
 arduino.on('card-reader', function(token) {
   if (choice != null && question != null && arduino.status === 'question') {
-    responseToQuestion();
+    responseToQuestion(token);
   }
   else if (alarmTrigger == true) {
     stopAlarm();
@@ -153,6 +173,7 @@ arduino.on('alarm-noise', function() {
     arduino.scroll.lines(0, "ALARM  NOISE ACTIVATED !");
     arduino.scroll.lines(1, "PLEASE STOP ME...")
     this.ledV.on();
+    socket.emit('alarm-noise-trigger');
   }
 });
 
@@ -168,6 +189,7 @@ arduino.on('alarm-luminosity', function() {
     arduino.scroll.lines(0, "ALARM  NOISE ACTIVATED !");
     arduino.scroll.lines(1, "PLEASE STOP ME...")
     this.ledR.on();
+    socket.emit('alarm-luminosity-trigger');
   }
 });
 
