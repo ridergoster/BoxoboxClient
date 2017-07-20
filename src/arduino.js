@@ -18,9 +18,9 @@ var Board = class Board extends EventEmitter {
         lines: 2
       });
       this.piezo = new five.Piezo(8);
-      this.ledV = new five.Led(9);
-      this.ledJ = new five.Led('A0');
-      this.ledR = new five.Led('A1');
+      this.ledR = new five.Led(9);
+      this.ledV = new five.Led('A0');
+      this.ledJ = new five.Led('A1');
       this.leftBtn = new five.Button(10);
       this.rightBtn = new five.Button(11);
       this.questionBtn = new five.Button(12);
@@ -36,13 +36,17 @@ var Board = class Board extends EventEmitter {
         threshold: 50,
       });
 
-      this.temperatureSensor = new five.Multi({
+      this.temperatureSensor = new five.Thermometer({
+        controller: "DHT11_I2C_NANO_BACKPACK"
+      });
+
+      this.HumiditySensor = new five.Hygrometer({
         controller: "DHT11_I2C_NANO_BACKPACK"
       });
 
       this.questionBtn.on("down", function() {
         if (this.status !== 'alarm') {
-          this.emit('trigger');
+          this.emit('reset');
           this.status = 'question';
           this.emit('question');
         }
@@ -50,7 +54,7 @@ var Board = class Board extends EventEmitter {
 
       this.timeBtn.on("down", function() {
         if (this.status !== 'info' && this.status !== 'alarm') {
-          this.emit('trigger');
+          this.emit('reset');
           this.status = 'info';
         }
         this.emit('info');
@@ -86,7 +90,7 @@ var Board = class Board extends EventEmitter {
       }.bind(this))
 
       this.status = 'info';
-      this.board.wait(1000, function() {this.emit('info'); }.bind(this));
+      this.board.wait(1000, function() {this.emit('start'); }.bind(this));
     }.bind(this));
 
     this.nfc.on('reader', function(reader) {
